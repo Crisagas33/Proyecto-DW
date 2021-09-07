@@ -4,7 +4,6 @@ from core.erp.models import Type, Employee
 
 # listar
 
-query = Type.objects.all()
 # print(query)
 
 # insertar
@@ -26,7 +25,7 @@ query = Type.objects.all()
 
 # obj = Type.objects.filter(name__icontains='pru')
 
-Employee.objects.filter(type_id=1)
-for i in Type.objects.filter(name__endswith='a')[:2]:
-    print(i.name)
+# Employee.objects.filter(type_id=1)
+# for i in Type.objects.filter(name__endswith='a')[:2]:
+#     print(i.name)
 
