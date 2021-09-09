@@ -1,6 +1,5 @@
 from config.wsgi import *
 from django.test import TestCase
-from core.erp.models import Type, Employee
 
 # listar
 
@@ -28,4 +27,3 @@ from core.erp.models import Type, Employee
 # Employee.objects.filter(type_id=1)
 # for i in Type.objects.filter(name__endswith='a')[:2]:
 #     print(i.name)
-
