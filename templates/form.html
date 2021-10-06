@@ -1,11 +1,16 @@
-{% extends 'body.html' %}
+{% extends 'vtc/body.html' %}
 {% load widget_tweaks %}
 {% block content %}
     <form method="post" action=".">
         <div class="card card-default">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-plus-square"></i>
+                    {% if action == 'add' %}
+                        <i class="fas fa-plus-square"></i>
+                    {% else %}
+                        <i class="fas fa-edit"></i>
+                    {% endif %}
+
                     {{ title }}
                 </h3>
             </div>
@@ -19,10 +24,10 @@
                         <h5><i class="icon fas fa-ban">Ha ocurrido un error al guardar el registro</i></h5>
                         <ul>
                             {% for field in form %}
-                            {% for error in field.errors %}
-                                <li>{{ error }}</li>
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
                             {% endfor %}
-                        {% endfor %}
                         </ul>
                     </div>
                 {% endif %}
@@ -41,33 +46,33 @@
         </div>
     </form>
     <script>
-     {% if form.errors %}
-         var errors = '';
-         {% for field in form %}
-         {% for error in field.errors %}
-             errors += '{{ error }}\n'
-         {% endfor %}
-         {% endfor %}
-         Swal.fire({
-            title: 'Error!',
-            text: errors,
-            icon: 'error',
-        });
-      {% endif %}
-        $('form').on('submit', function (e){
-           e.preventDefault()
+        {% if form.errors %}
+            var errors = '';
+            {% for field in form %}
+                {% for error in field.errors %}
+                    errors += '{{ error }}\n'
+                {% endfor %}
+            {% endfor %}
+            Swal.fire({
+                title: 'Error!',
+                text: errors,
+                icon: 'error',
+            });
+        {% endif %}
+        $('form').on('submit', function (e) {
+            e.preventDefault()
             var parameters = $(this).serializeArray();
-             $.ajax({
-                url:  window.location.pathname,
+            $.ajax({
+                url: window.location.pathname,
                 type: 'POST',
                 data: parameters,
                 dataType: 'json'
             }).done(function (data) {
-                if(!data.hasOwnProperty('error')){
-                    location.href  = '{{ list_url }}'
+                if (!data.hasOwnProperty('error')) {
+                    location.href = '{{ list_url }}'
                     return false
                 }
-             message_error(data.error);
+                message_error(data.error);
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 alert(textStatus + ': ' + errorThrown);
             }).always(function (data) {
