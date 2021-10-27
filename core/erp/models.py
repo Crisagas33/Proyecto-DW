@@ -1,17 +1,30 @@
+from crum import get_current_user
 from django.db import models
 from datetime import datetime
 
 from django.forms import model_to_dict
 
+from config.settings import MEDIA_URL
 from core.erp.choices import gender_choices
+from core.models import BaseModel
 
 
-class Category(models.Model):
+class Category(BaseModel):
     name = models.CharField(max_length=150, verbose_name='Nombre', unique=True)
     desc = models.CharField(max_length=150, null=True, blank=True, verbose_name='Descripción')
 
     def __str__(self):
         return 'Nombre: {}'.format(self.name)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        user = get_current_user()
+        if user is not None:
+            if not self.pk:
+                self.user_creation = user
+            else:
+                self.user_updated = user
+        super(Category, self).save()
 
     def toJson(self):
         item = model_to_dict(self)
@@ -25,12 +38,24 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=150, verbose_name='Nombre', unique=True)
-    cate = models.ForeignKey(Category, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='product/%Y/%m/%d', null=True, blank=True)
-    pvp = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    cate = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría')
+    image = models.ImageField(upload_to='product/%Y/%m/%d', null=True, blank=True, verbose_name='Imagen')
+    pv = models.DecimalField(default=0.00, max_digits=9, decimal_places=2, verbose_name='Precio de venta')
 
     def __str__(self):
         return self.name
+
+    def toJson(self):
+        item = model_to_dict(self)
+        item['cate'] = self.cate.toJson()
+        item['image'] = self.get_image()
+        item['pv'] = format(self.pv, '.2f')
+        return item
+
+    def get_image(self):
+        if self.image:
+            return '{}{}'.format(MEDIA_URL, self.image)
+        return '{}{}'.format(MEDIA_URL, 'img/empty.png')
 
     class Meta:
         verbose_name = 'Producto'
@@ -41,13 +66,19 @@ class Product(models.Model):
 class Client(models.Model):
     names = models.CharField(max_length=150, verbose_name='Nombres')
     surnames = models.CharField(max_length=150, verbose_name='Apellidos')
-    dni = models.CharField(max_length=10, unique=True, verbose_name='Dni')
+    dpi = models.CharField(max_length=10, unique=True, verbose_name='Dpi')
     birthday = models.DateField(default=datetime.now, verbose_name='Fecha de nacimiento')
     address = models.CharField(max_length=150, null=True, blank=True, verbose_name='Dirección')
     sexo = models.CharField(max_length=10, choices=gender_choices, default='male', verbose_name='Sexo')
 
     def __str__(self):
         return self.names
+
+    def toJson(self):
+        item = model_to_dict(self)
+        item['sexo'] = {'id': self.sexo, 'name': self.get_sexo_display()}
+        item['birthday'] = self.birthday.strftime('%Y-%m-%d')
+        return item
 
     class Meta:
         verbose_name = 'Cliente'
@@ -85,50 +116,3 @@ class DetSale(models.Model):
         verbose_name = 'Detalle de Venta'
         verbose_name_plural = 'Detalle de Ventas'
         ordering = ['id']
-
-# class Type(models.Model):
-#     name = models.CharField(max_length=150, verbose_name='Nombre', unique=True)
-#
-#     def __str__(self):
-#         return self.name
-#     class Meta:
-#         verbose_name = 'Tipo'
-#         verbose_name_plural = 'Tipos'
-#         db_table = 'tipo'
-#         ordering = ['id']
-#
-#
-# class Category(models.Model):
-#     name = models.CharField(max_length=150, verbose_name='Nombre')
-#
-#     def __str__(self):
-#         return self.name
-#     class Meta:
-#         verbose_name = 'Categoria'
-#         verbose_name_plural = 'Categorias'
-#         db_table = 'categoria'
-#         ordering = ['id']
-#
-#
-# class Employee(models.Model):
-#     categ = models.ManyToManyField(Category)
-#     type = models.ForeignKey(Type, on_delete=models.CASCADE)
-#     names = models.CharField(max_length=150, verbose_name='Nombres')
-#     dpi = models.CharField(max_length=13, unique=True, verbose_name='DPI')
-#     date_joined = models.DateField(default=datetime.now, verbose_name='Fecha de Ingreso')
-#     date_creation = models.DateTimeField(auto_now=True)
-#     date_updated = models.DateTimeField(auto_now_add=True)
-#     age = models.PositiveIntegerField(default=0)
-#     salary = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
-#     state = models.BooleanField(default=True)
-#     avatar = models.ImageField(upload_to='avatar/%Y/%m/%d', null=True, blank=True)
-#     cvitae = models.FileField(upload_to='cvitae/%Y/%m/%d', null=True, blank=True)
-#
-#     def __str__(self):
-#         return self.names
-#
-#     class Meta:
-#         verbose_name = 'Empleado'
-#         verbose_name_plural = 'Empleados'
-#         db_table = 'empleado'
-#         ordering = ['id']

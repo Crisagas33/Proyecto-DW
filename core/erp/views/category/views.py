@@ -25,7 +25,7 @@ class CategoryListView(ListView):
             if action == 'searchdata':
                 data = []
                 for i in Category.objects.all():
-                   data.append(i.toJson())
+                    data.append(i.toJson())
             else:
                 data['error'] = 'Ha ocurrido un error'
         except Exception as e:
@@ -40,15 +40,16 @@ class CategoryListView(ListView):
         context['entity'] = 'Categorías'
         return context
 
+
 class CategoryCreateView(CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'category/create.html'
     success_url = reverse_lazy('erp:category_list')
 
+    @method_decorator(csrf_exempt)
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -72,12 +73,14 @@ class CategoryCreateView(CreateView):
         context['action'] = 'add'
         return context
 
+
 class CategoryUpdateView(UpdateView):
     model = Category
     form_class = CategoryForm
     template_name = 'category/create.html'
     success_url = reverse_lazy('erp:category_list')
 
+    @method_decorator(csrf_exempt)
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -98,17 +101,19 @@ class CategoryUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Edición una Categoria'
+        context['title'] = 'Editar una Categoria'
         context['entity'] = 'Categorías'
         context['list_url'] = reverse_lazy('erp:category_list')
         context['action'] = 'edit'
         return context
+
 
 class CategoryDeleteView(DeleteView):
     model = Category
     template_name = 'category/delete.html'
     success_url = reverse_lazy('erp:category_list')
 
+    @method_decorator(csrf_exempt)
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -128,6 +133,7 @@ class CategoryDeleteView(DeleteView):
         context['entity'] = 'Categorias'
         context['list_url'] = reverse_lazy('erp:category_list')
         return context
+
 
 class CategoryFormView(FormView):
     form_class = CategoryForm

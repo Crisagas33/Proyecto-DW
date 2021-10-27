@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block head %}
+    <link href="{% static 'lib/select2-4.0.13/css/select2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/select2-4.0.13/css/select2-bootstrap4.min.css' %}" rel="stylesheet">
+    <script src="{% static 'lib/select2-4.0.13/js/select2.min.js' %}"></script>
+    <script src="{% static 'lib/select2-4.0.13/js/i18n/es.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <form method="post" action="." enctype="multipart/form-data">
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-angry"></i>
+                    {{ title }}
+                </h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Categorías:</label>
+                    {{ form.categories }}
+                </div>
+                <div class="form-group">
+                    <label>Productos:</label>
+                    {{ form.products }}
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+        var selectProductos = $('select[name="products"]');
+
+        $(function () {
+            $('.select2').select2({
+                theme: 'bootstrap4',
+                language: 'es'
+            });
+
+
+            $('select[name="categories"]').on('change', function () {
+                var id = $(this).val();
+                var opciones = '<option value="">==============</option>;'
+                if (id === '') {
+                    selectProductos.html(opciones);
+                    return false;
+                }
+                $.ajax({
+                    url: window.location.pathname,
+                    type: 'POST',
+                    data: {
+                        'action': 'search_product_id',
+                        'id': id
+                    },
+                    dataType: 'json',
+                }).done(function (data) {
+                    if (!data.hasOwnProperty('error')) {
+                        selectProductos.html('').select2({
+                            theme: 'bootstrap4',
+                            language: 'es',
+                            data: data
+                        });
+                        {#$.each(data, function (key, value) {#}
+                        {#    opciones += '<option value="' + value.id + '">' + value.name + '</option>'#}
+                        {#);#}
+                        return false;
+                    }
+                    message_error(data.error);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    alert(textStatus + ': ' + errorThrown);
+                }).always(function (data) {
+                    //selectProductos.html(opciones);
+                });
+            });
+        });
+    </script>
+{% endblock %}

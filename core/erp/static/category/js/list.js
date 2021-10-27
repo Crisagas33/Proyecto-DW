@@ -9,7 +9,7 @@ $(function () {
             type: 'POST',
             data: {
                 'action': 'searchdata'
-            }, // parametros
+            },
             dataSrc: ""
         },
         columns: [
@@ -24,8 +24,12 @@ $(function () {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    var buttons = '<a href="/erp/category/edit/'+row.id+'/" type="button" class="btn btn-warning btn-xs"><i class="fas fa-edit"></i></a>';
-                    buttons += '<a href="/erp/category/delete/'+row.id+'/" type="button" class="btn btn-danger btn-xs"><i class="fas fa-trash-alt"></i></a>';
+                    var buttons = '<a href="/erp/category/edit/'+row.id+'/" type="button" class="btn btn-warning btn-xs">' +
+                        '<i class="fas fa-edit"></i>' +
+                        '</a>';
+                    buttons += '<a href="/erp/category/delete/'+row.id+'/" type="button" class="btn btn-danger btn-xs">' +
+                        '<i class="fas fa-trash"></i></i>' +
+                        '</a>';
                     return buttons;
                 }
             },

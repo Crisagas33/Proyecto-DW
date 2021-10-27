@@ -1,16 +1,34 @@
 from django.urls import path
 
 from core.erp.views.category.views import *
-from core.erp.views.dashboard.views import *
+from core.erp.views.client.views import *
+from core.erp.views.product.views import *
+from core.erp.views.sale.views import *
+from core.erp.views.dashboard.views import DashboardView
+from core.erp.views.tests.tests import TestView
 
 app_name = 'erp'
 
 urlpatterns = [
+    # Url Home
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    # Url Categoria
     path('category/list/', CategoryListView.as_view(), name='category_list'),
     path('category/add/', CategoryCreateView.as_view(), name='category_create'),
     path('category/edit/<int:pk>/', CategoryUpdateView.as_view(), name='category_update'),
     path('category/delete/<int:pk>/', CategoryDeleteView.as_view(), name='category_delete'),
-    #path('category/form/', CategoryFormView.as_view(), name='category_form'),
-    #home
-    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    # Url Producto
+    path('product/list/', ProductListView.as_view(), name='product_list'),
+    path('product/add/', ProductCreateView.as_view(), name='product_create'),
+    path('product/update/<int:pk>/', ProductUpdateView.as_view(), name='product_update'),
+    path('product/delete/<int:pk>/', ProductDeleteView.as_view(), name='product_delete'),
+    # Url Cliente
+    path('client/list/', ClientListView.as_view(), name='client_list'),
+    path('client/add/', ClientCreateView.as_view(), name='client_create'),
+    path('client/update/<int:pk>/', ClientUpdateView.as_view(), name='client_update'),
+    path('client/delete/<int:pk>/', ClientDeleteView.as_view(), name='client_delete'),
+    # Url Venta
+    path('sale/add/', SaleCreateView.as_view(), name='sale_create'),
+    # Url Test
+    path('test/', TestView.as_view(), name='test'),
 ]

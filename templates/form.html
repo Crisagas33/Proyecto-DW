@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% load widget_tweaks %}
 {% block content %}
-    <form method="post" action=".">
+    <form method="post" action="." enctype="multipart/form-data">
         <div class="card card-default">
             <div class="card-header">
                 <h3 class="card-title">
@@ -10,7 +10,6 @@
                     {% else %}
                         <i class="fas fa-edit"></i>
                     {% endif %}
-
                     {{ title }}
                 </h3>
             </div>
@@ -41,7 +40,8 @@
         </div>
         <!-- /.card-body -->
         <div class="card-footer">
-            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar Registro</button>
+            <button type="submit" class="btn btn-outline-success"><i class="fas fa-save"></i> Guardar Registro</button>
+            <a href="{{ list_url }}" class="btn btn-outline-danger"><i class="fas fa-times"></i> Cancelar</a>
         </div>
     </form>
     <script>
@@ -49,7 +49,7 @@
             var errors = '';
             {% for field in form %}
                 {% for error in field.errors %}
-                    errors += '{{ error }}\n'
+                    errors += '{{ error }}\n';
                 {% endfor %}
             {% endfor %}
             {% for error in form.non_field_errors %}
@@ -63,21 +63,10 @@
         {% endif %}
         $('form').on('submit', function (e) {
             e.preventDefault()
-            var parameters = $(this).serializeArray();
-            $.ajax({
-                url: window.location.pathname,
-                type: 'POST',
-                data: parameters,
-                dataType: 'json'
-            }).done(function (data) {
-                if (!data.hasOwnProperty('error')) {
-                    location.href = '{{ list_url }}'
-                    return false
-                }
-                message_error(data.error);
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                alert(textStatus + ': ' + errorThrown);
-            }).always(function (data) {
+            //var parameters = $(this).serializeArray();
+            var parameters = new FormData(this);
+            submitConAjax(window.location.pathname, parameters, function () {
+            location.href = '{{ list_url }}'
             });
         });
     </script>
