@@ -20,11 +20,11 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a href="{% url 'index' %}"><b>Admin</b>LTE</a>
+        <a href="{% url 'index' %}"><b>LogIn </b>Proyecto-DW</a>
     </div>
     <div class="card">
         <div class="card-body login-card-body">
-            <p class="login-box-msg">Ingresa Tus Datos Para Iniciar Sesión</p>
+            <p class="login-box-msg">Ingresa Los Datos Para Iniciar Sesión</p>
             <form action="." method="post">
                 <input type="hidden" name="next" value="{{ next }}">
                 {% csrf_token %}
@@ -54,30 +54,30 @@
             </form>
         </div>
     </div>
-    <script type="application/javascript">
-        {% if form.errors %}
-            var errors = '';
-            {% for field in form %}
-                {% for error in field.errors %}
+        <script type="application/javascript">
+            {% if form.errors %}
+                var errors = '';
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        errors += '{{ error }}\n';
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
                     errors += '{{ error }}\n';
                 {% endfor %}
-            {% endfor %}
-            {% for error in form.non_field_errors %}
-                errors += '{{ error }}\n';
-            {% endfor %}
-            Swal.fire({
-                title: 'Error!',
-                text: errors,
-                icon: 'error'
-            });
-        {% endif %}
-    </script>
-</div>
-<!-- jQuery -->
-<script src="{% static 'lib/adminlte-3.0.4/plugins/jquery/jquery.min.js' %}"></script>
-<!-- Bootstrap 4 -->
-<script src="{% static 'lib/adminlte-3.0.4/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<!-- AdminLTE App -->
-<script src="{% static 'lib/adminlte-3.0.4/js/adminlte.min.js' %}"></script>
+                Swal.fire({
+                    title: 'Error!',
+                    text: errors,
+                    icon: 'error'
+                });
+            {% endif %}
+        </script>
+    </div>
+    <!-- jQuery -->
+    <script src="{% static 'lib/adminlte-3.0.4/plugins/jquery/jquery.min.js' %}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{% static 'lib/adminlte-3.0.4/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'lib/adminlte-3.0.4/js/adminlte.min.js' %}"></script>
 </body>
 </html>

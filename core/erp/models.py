@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.forms import model_to_dict
 
-from config.settings import MEDIA_URL
+from config.settings import MEDIA_URL, STATIC_URL
 from core.erp.choices import gender_choices
 from core.models import BaseModel
 
@@ -55,7 +55,7 @@ class Product(models.Model):
     def get_image(self):
         if self.image:
             return '{}{}'.format(MEDIA_URL, self.image)
-        return '{}{}'.format(MEDIA_URL, 'img/empty.png')
+        return '{}{}'.format(STATIC_URL, 'img/empty.png')
 
     class Meta:
         verbose_name = 'Producto'
@@ -96,6 +96,16 @@ class Sale(models.Model):
     def __str__(self):
         return self.cli.names
 
+    def toJson(self):
+        item = model_to_dict(self)
+        item['cli'] = self.cli.toJson()
+        item['subtotal'] = format(self.subtotal, '.2f')
+        item['iva'] = format(self.iva, '.2f')
+        item['total'] = format(self.total, '.2f')
+        item['date_joined'] = self.date_joined.strftime('%Y-%m-%d')
+        item['det'] = [i.toJson() for i in self.detsale_set.all()]
+        return item
+
     class Meta:
         verbose_name = 'Venta'
         verbose_name_plural = 'Ventas'
@@ -111,6 +121,13 @@ class DetSale(models.Model):
 
     def __str__(self):
         return self.prod.name
+
+    def toJson(self):
+        item = model_to_dict(self, exclude=['sale'])
+        item['prod'] = self.prod.toJson()
+        item['price'] = format(self.price, '.2f')
+        item['subtotal'] = format(self.subtotal, '.2f')
+        return item
 
     class Meta:
         verbose_name = 'Detalle de Venta'

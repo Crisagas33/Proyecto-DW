@@ -16,7 +16,7 @@ function message_error(obj) {
     });
 }
 
-function submitConAjax(url,  parameters, callback) {
+function submitConAjax(url, parameters, callback) {
     $.confirm({
         theme: 'material',
         title: 'Confirmación',
@@ -33,7 +33,7 @@ function submitConAjax(url,  parameters, callback) {
                 btnClass: 'btn-primary',
                 action: function () {
                     $.ajax({
-                        url:url,
+                        url: url,
                         type: 'POST',
                         data: parameters,
                         dataType: 'json',
@@ -42,7 +42,7 @@ function submitConAjax(url,  parameters, callback) {
                     }).done(function (data) {
                         console.log(data);
                         if (!data.hasOwnProperty('error')) {
-                            callback();
+                            callback(data);
                             return false;
                         }
                         message_error(data.error);
@@ -62,3 +62,62 @@ function submitConAjax(url,  parameters, callback) {
         }
     })
 }
+function alertaXD(callback) {
+    $.confirm({
+        theme: 'material',
+        title: 'Confirmación',
+        icon: 'fa fa-info',
+        content: '¿Estás seguro de hacer esto?',
+        columnClass: 'medium',
+        typeAnimated: true,
+        cancelButtonClass: 'btn-primary',
+        draggable: true,
+        dragWindowBorder: false,
+        buttons: {
+            info: {
+                text: "Si",
+                btnClass: 'btn-primary',
+                action: function () {
+                   callback();
+                }
+            },
+            danger: {
+                text: "No",
+                btnClass: 'btn-red',
+                action: function () {
+
+                }
+            },
+        }
+    })
+}
+function alertaXDD(callback, cancel) {
+    $.confirm({
+        theme: 'material',
+        title: 'Confirmación',
+        icon: 'fa fa-info',
+        content: '¿Quieres imprimir la factura?',
+        columnClass: 'medium',
+        typeAnimated: true,
+        cancelButtonClass: 'btn-primary',
+        draggable: true,
+        dragWindowBorder: false,
+        buttons: {
+            info: {
+                text: "Si",
+                btnClass: 'btn-primary',
+                action: function () {
+                   callback();
+                }
+            },
+            danger: {
+                text: "No",
+                btnClass: 'btn-red',
+                action: function () {
+                    cancel();
+                }
+            },
+        }
+    })
+}
+
